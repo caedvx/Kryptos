@@ -11,6 +11,7 @@ out/
 *.dll
 *.so
 *.dylib
+bin/
 
 # Operating System Files
 .DS_Store

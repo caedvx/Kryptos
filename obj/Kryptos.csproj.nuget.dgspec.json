@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Code\\Kryptos\\Kryptos.csproj": {}
+    "D:\\Code\\Personal\\Kryptos\\Kryptos.csproj": {}
   },
   "projects": {
-    "C:\\Code\\Kryptos\\Kryptos.csproj": {
+    "D:\\Code\\Personal\\Kryptos\\Kryptos.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Code\\Kryptos\\Kryptos.csproj",
+        "projectUniqueName": "D:\\Code\\Personal\\Kryptos\\Kryptos.csproj",
         "projectName": "Kryptos",
-        "projectPath": "C:\\Code\\Kryptos\\Kryptos.csproj",
-        "packagesPath": "C:\\Users\\Victor Anyuru N25E\\.nuget\\packages\\",
-        "outputPath": "C:\\Code\\Kryptos\\obj\\",
+        "projectPath": "D:\\Code\\Personal\\Kryptos\\Kryptos.csproj",
+        "packagesPath": "C:\\Users\\Zeux\\.nuget\\packages\\",
+        "outputPath": "D:\\Code\\Personal\\Kryptos\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Victor Anyuru N25E\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Zeux\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -60,7 +60,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
