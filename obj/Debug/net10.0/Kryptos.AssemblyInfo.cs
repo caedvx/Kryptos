@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Kryptos")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f4c0545535f3c4737d068cf86c0b78828857a012")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+55fb3992ff0c54d3cda71d84afaa798d29a6f549")]
 [assembly: System.Reflection.AssemblyProductAttribute("Kryptos")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Kryptos")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
