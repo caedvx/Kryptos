@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Transactions;
 using System.Xml.Serialization;
 
@@ -53,9 +54,43 @@ class Program
         string secretKey = Console.ReadLine();
         ulong[] encodedSecretKey = textNumberConverter.ConvertToNumber(secretKey);
 
+        Console.WriteLine("save secret key ? (y/n)");
+        string saveSecretKey = Console.ReadLine();
+        if(saveSecretKey.ToLower() == "y")
+        {
+            Console.WriteLine("Enter a name for the secret key:");
+            string keyName = Console.ReadLine();
+            if(!string.IsNullOrWhiteSpace(keyName))
+            {
+                File.WriteAllText($"{keyName}.txt", string.Join(", ", encodedSecretKey));
+                Console.WriteLine($"Secret key saved as {keyName}.txt");
+            }
+            else
+            {
+                Console.WriteLine("Invalid key name provided.");
+            }
+        }
+
         Console.WriteLine("Enter S-Box Generation Seed");
         string seed = Console.ReadLine();
         byte[] sBox = sBoxGenerator.GenerateSBox(seed);
+
+        Console.WriteLine("save S-Box ? (y/n)");
+        string saveSBox = Console.ReadLine();
+        if(saveSBox.ToLower() == "y")
+        {
+            Console.WriteLine("Enter a name for the S-Box:");
+            string sBoxName = Console.ReadLine();
+            if(!string.IsNullOrWhiteSpace(sBoxName))
+            {
+                File.WriteAllText($"{sBoxName}.txt", string.Join(", ", sBox));
+                Console.WriteLine($"S-Box saved as {sBoxName}.txt");
+            }
+            else
+            {
+                Console.WriteLine("Invalid S-Box name provided.");
+            }
+        }
 
         byte[] encryptedBytes = symmetricEncryption.Encrypt(encodedArray, encodedSecretKey, sBox);
         ulong[] encryptedNumbers = numberByteChunker.Chunk(encryptedBytes);
@@ -68,5 +103,67 @@ class Program
     {
         Console.WriteLine("Enter a string to decode");
         string userInput = Console.ReadLine();
+        byte[] encryptedBytes = Convert.FromBase64String(userInput);
+
+        Console.WriteLine("Use previous secret key ? (y/n)");
+        string usePreviousKey = Console.ReadLine();
+
+        ulong[] encodedSecretKey;
+        if (usePreviousKey.ToLower() == "y")
+        {
+            secretKeySelect:
+            Console.WriteLine("Enter the name of the secret key:");
+            string keyFileName = Console.ReadLine();
+            if (File.Exists($"{keyFileName}.txt"))
+            {
+                string keyValues = System.IO.File.ReadAllText($"{keyFileName}.txt");
+                encodedSecretKey = textNumberConverter.ConvertToNumber(keyValues);
+                
+            }
+            else
+            {
+                Console.WriteLine("File not found.");
+                goto secretKeySelect;
+            }
+        }
+        else
+        {
+            Console.WriteLine("Enter the secret key:");
+            string secretKey = Console.ReadLine();
+            encodedSecretKey = textNumberConverter.ConvertToNumber(secretKey);
+        }
+        Console.WriteLine("Use Previously generated S-Box ? (y/n)");
+        string usePreviousSBox = Console.ReadLine(); 
+        byte[] inverseSBox;  
+        if (usePreviousSBox.ToLower() == "y")
+        {
+            sBoxSelect:
+            Console.WriteLine("Enter the name of the S-Box:");
+            string sBoxFileName = Console.ReadLine();
+            if (File.Exists($"{sBoxFileName}.txt"))
+            {
+                string sBoxValues = System.IO.File.ReadAllText($"{sBoxFileName}.txt");
+                byte[] sBox = sBoxValues.Split(',').Select(byte.Parse).ToArray();
+                inverseSBox = sBoxGenerator.GenerateInverseSBox(sBox);
+            }
+            else
+            {
+                Console.WriteLine("File not found.");
+                goto sBoxSelect;
+            }
+        }
+        else
+        {
+            Console.WriteLine("Enter S-Box Generation Seed");
+            string seed = Console.ReadLine();
+            byte[] sBox = sBoxGenerator.GenerateSBox(seed);
+            inverseSBox = sBoxGenerator.GenerateInverseSBox(sBox);
+        }
+
+        ulong[] decryptedMessage = symmetricEncryption.Decrypt(encryptedBytes, encodedSecretKey, inverseSBox);
+        Console.WriteLine("Decrypted numbers: " + string.Join(", ", decryptedMessage));
+        string decryptedString = textNumberConverter.ConvertToText(decryptedMessage);
+        Console.WriteLine("Decrypted string: " + decryptedString);
+
     }
 }
