@@ -50,47 +50,98 @@ class Program
         ulong[] encodedArray = textNumberConverter.ConvertToNumber(userInput);
         Console.WriteLine("Encoded numbers: " + string.Join(", ", encodedArray));
 
-        Console.WriteLine("Enter a Secret Key:");
-        string secretKey = Console.ReadLine();
-        ulong[] encodedSecretKey = textNumberConverter.ConvertToNumber(secretKey);
+         Console.WriteLine("Use previous secret key ? (y/n)");
+        string usePreviousKey = Console.ReadLine();
 
-        Console.WriteLine("save secret key ? (y/n)");
-        string saveSecretKey = Console.ReadLine();
-        if(saveSecretKey.ToLower() == "y")
+        ulong[] encodedSecretKey;
+        string saveSecretKey;
+        if (usePreviousKey.ToLower() == "y")
         {
-            Console.WriteLine("Enter a name for the secret key:");
-            string keyName = Console.ReadLine();
-            if(!string.IsNullOrWhiteSpace(keyName))
+            secretKeySelect:
+            Console.WriteLine("Enter the name of the secret key:");
+            string keyFileName = Console.ReadLine();
+            if (File.Exists($"{keyFileName}.txt"))
             {
-                File.WriteAllText($"{keyName}.txt", string.Join(", ", encodedSecretKey));
-                Console.WriteLine($"Secret key saved as {keyName}.txt");
+                string keyValues = System.IO.File.ReadAllText($"{keyFileName}.txt");
+                encodedSecretKey = textNumberConverter.ConvertToNumber(keyValues);
+                
             }
             else
             {
-                Console.WriteLine("Invalid key name provided.");
+                Console.WriteLine("File not found.");
+                goto secretKeySelect;
+            }
+        }
+        else
+        {
+            Console.WriteLine("Enter a Secret Key:");
+            string secretKey = Console.ReadLine();
+            encodedSecretKey = textNumberConverter.ConvertToNumber(secretKey);
+
+            Console.WriteLine("save secret key ? (y/n)");
+            saveSecretKey = Console.ReadLine();
+            
+            if(saveSecretKey.ToLower() == "y")
+            {
+                Console.WriteLine("Enter a name for the secret key:");
+                string keyName = Console.ReadLine();
+                if(!string.IsNullOrWhiteSpace(keyName))
+                {
+                    File.WriteAllText($"{keyName}.txt", string.Join(", ", encodedSecretKey));
+                    Console.WriteLine($"Secret key saved as {keyName}.txt");
+                }
+                else
+                {
+                    Console.WriteLine("Invalid key name provided.");
+                }
             }
         }
 
-        Console.WriteLine("Enter S-Box Generation Seed");
-        string seed = Console.ReadLine();
-        byte[] sBox = sBoxGenerator.GenerateSBox(seed);
-
-        Console.WriteLine("save S-Box ? (y/n)");
-        string saveSBox = Console.ReadLine();
-        if(saveSBox.ToLower() == "y")
+        Console.WriteLine("Use Previously generated S-Box ? (y/n)");
+        string usePreviousSBox = Console.ReadLine(); 
+        byte[] inverseSBox;  
+        byte[] sBox;
+        if (usePreviousSBox.ToLower() == "y")
         {
-            Console.WriteLine("Enter a name for the S-Box:");
-            string sBoxName = Console.ReadLine();
-            if(!string.IsNullOrWhiteSpace(sBoxName))
+            sBoxSelect:
+            Console.WriteLine("Enter the name of the S-Box:");
+            string sBoxFileName = Console.ReadLine();
+            if (File.Exists($"{sBoxFileName}.txt"))
             {
-                File.WriteAllText($"{sBoxName}.txt", string.Join(", ", sBox));
-                Console.WriteLine($"S-Box saved as {sBoxName}.txt");
+                string sBoxValues = System.IO.File.ReadAllText($"{sBoxFileName}.txt");
+                sBox = sBoxValues.Split(',').Select(byte.Parse).ToArray();
+                inverseSBox = sBoxGenerator.GenerateInverseSBox(sBox);
             }
             else
             {
-                Console.WriteLine("Invalid S-Box name provided.");
+                Console.WriteLine("File not found.");
+                goto sBoxSelect;
             }
         }
+        else
+        {
+            
+            string seed = Console.ReadLine();
+            sBox = sBoxGenerator.GenerateSBox(seed);
+
+            Console.WriteLine("save S-Box ? (y/n)");
+            string saveSBox = Console.ReadLine();
+            if(saveSBox.ToLower() == "y")
+            {
+                Console.WriteLine("Enter a name for the S-Box:");
+                string sBoxName = Console.ReadLine();
+                if(!string.IsNullOrWhiteSpace(sBoxName))
+                {
+                    File.WriteAllText($"{sBoxName}.txt", string.Join(", ", sBox));
+                    Console.WriteLine($"S-Box saved as {sBoxName}.txt");
+                }
+                else
+                {
+                    Console.WriteLine("Invalid S-Box name provided.");
+                }
+            }
+        }
+        
 
         byte[] encryptedBytes = symmetricEncryption.Encrypt(encodedArray, encodedSecretKey, sBox);
         ulong[] encryptedNumbers = numberByteChunker.Chunk(encryptedBytes);
